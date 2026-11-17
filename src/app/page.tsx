@@ -49,12 +49,14 @@ export default function Home() {
           <a href="#about" className="hover:text-white">About</a>
         </nav>
 
-        <a
-          href="mailto:contact@visionmarketplace.com?subject=Project%20submission"
-          className="rounded-full border border-cyan-400 px-5 py-2 text-sm text-cyan-300"
-        >
-          Submit a Project
-        </a>
+        
+          <a
+            href="/submit"
+            className="rounded-full border border-cyan-400 px-5 py-2 text-sm text-cyan-300"
+          >
+            Submit a Project
+          </a>
+
       </header>
 
       <section className="mx-auto max-w-5xl px-6 pb-20 pt-24 text-center">
