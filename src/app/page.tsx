@@ -101,11 +101,7 @@ const filteredProjects = projects.filter((project) => {
           <a href="#about" className="hover:text-white">About</a>
         </nav>
 
-<<<<<<< HEAD
-        
-=======
-       
->>>>>>> 8b0c203 (Implement project submissions, uploads, gallery and admin API)
+
           <a
             href="/submit"
             className="rounded-full border border-cyan-400 px-5 py-2 text-sm text-cyan-300"
