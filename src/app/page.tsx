@@ -1,7 +1,6 @@
 
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const categories = [
   "All",
@@ -32,9 +31,62 @@ const opportunities = [
   },
 ];
 
+
+type PublicProject = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  category: string | null;
+  country: string | null;
+  development_stage: string | null;
+};
+
+
 export default function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+
+
+const [projects, setProjects] = useState<PublicProject[]>([]);
+const [loading, setLoading] = useState(true);
+const [loadError, setLoadError] = useState(false);
+
+useEffect(() => {
+  async function loadProjects() {
+    try {
+      const response = await fetch("/api/public/projects");
+
+      if (!response.ok) {
+        throw new Error("Unable to load projects.");
+      }
+
+      const data = await response.json();
+      setProjects(data.projects);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadProjects();
+}, []);
+
+const filteredProjects = projects.filter((project) => {
+  const term = search.trim().toLowerCase();
+
+  const matchesSearch =
+    !term ||
+    [project.title, project.summary, project.category, project.country]
+      .some((value) => (value || "").toLowerCase().includes(term));
+
+  const matchesCategory =
+    category === "All" || project.category === category;
+
+  return matchesSearch && matchesCategory;
+});
+
 
   return (
     <main className="min-h-screen bg-[#080d19] text-white">
@@ -49,7 +101,11 @@ export default function Home() {
           <a href="#about" className="hover:text-white">About</a>
         </nav>
 
+<<<<<<< HEAD
         
+=======
+       
+>>>>>>> 8b0c203 (Implement project submissions, uploads, gallery and admin API)
           <a
             href="/submit"
             className="rounded-full border border-cyan-400 px-5 py-2 text-sm text-cyan-300"
@@ -122,21 +178,55 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mt-10 rounded-2xl border border-dashed border-slate-700 bg-slate-900/50 px-6 py-20 text-center">
-          <div className="text-5xl">🚀</div>
-          <h3 className="mt-5 text-2xl font-semibold">
-            Projects are coming soon
-          </h3>
-          <p className="mx-auto mt-3 max-w-lg text-slate-400">
-            We are preparing our global project directory.
-            New ideas and innovations will appear here.
-          </p>
-          {(search || category !== "All") && (
-            <p className="mt-5 text-sm text-cyan-300">
-              Search: {search || "Any"} · Category: {category}
+        
+          {loading ? (
+            <p className="mt-10 text-center text-slate-400">
+              Loading projects...
             </p>
+          ) : loadError ? (
+            <p className="mt-10 text-center text-red-300">
+              Unable to load projects.
+            </p>
+          ) : filteredProjects.length === 0 ? (
+            <div className="mt-10 rounded-2xl border border-dashed border-slate-700 bg-slate-900/50 px-6 py-20 text-center">
+              <div className="text-5xl">🚀</div>
+              <h3 className="mt-5 text-2xl font-semibold">
+                {projects.length === 0
+                  ? "Projects are coming soon"
+                  : "No matching projects"}
+              </h3>
+              <p className="mt-3 text-slate-400">
+                {projects.length === 0
+                  ? "New ideas and innovations will appear here."
+                  : "Try another search or category."}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredProjects.map((project) => (
+                <article
+                  key={project.id}
+                  className="rounded-2xl border border-slate-800 bg-[#101827] p-6"
+                >
+                  <div className="mb-5 text-4xl">💡</div>
+                  <h3 className="text-xl font-bold">{project.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-400">
+                    {project.summary}
+                  </p>
+                  <div className="mt-5 text-xs text-cyan-300">
+                    {project.category} {project.country && `· ${project.country}`}
+                  </div>
+                  <a
+                    href={`/projects/${project.slug}`}
+                    className="mt-6 inline-block text-sm font-semibold text-cyan-400"
+                  >
+                    View Project →
+                  </a>
+                </article>
+              ))}
+            </div>
           )}
-        </div>
+
       </section>
 
       <section id="how-it-works" className="bg-slate-900/60 py-20">

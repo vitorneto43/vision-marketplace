@@ -1,8 +1,9 @@
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  request.headers.get("accept");
   try {
     const result = await sql`
       SELECT COUNT(*) AS total FROM projects
